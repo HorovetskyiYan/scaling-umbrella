@@ -83,23 +83,31 @@ class BinaryTree {
   }
 }
 
-Array.prototype.myFirstSort = function() {
-  for (let i = 1, l = this.length; i < l; i++) {
-    const current = this[i];
+Array.prototype.mySecondSort = function (callback) {
+  if (typeof callback !== 'function') {
+     throw new Error('Enter the callback')
+   }
+  for (let i = 1; i < this.length; i++) {
     let j = i;
-    while (j > 0 && this[j - 1] > current) {
+    let currentItem = this[i];
+    while (j > 0 && callback(this[j - 1], currentItem)) {
       this[j] = this[j - 1];
+      this[j - 1] = currentItem;
       j--;
     }
-    this[j] = current;
   }
   return this;
 };
 
-Array.prototype.mySecondSort = function() {
+
+
+Array.prototype.mySecondSort = function(callback) {
+  if (typeof callback !== 'function') {
+     throw new Error('Enter the callback')
+   }
   for (let j = this.length - 1; j > 0; j--) {
     for (let i = 0; i < j; i++) {
-      if (this[i] > this[i + 1]) {
+      if (callback(this[i], this[i + 1])) {
         let temp = this[i];
         this[i] = this[i + 1];
         this[i + 1] = temp;
