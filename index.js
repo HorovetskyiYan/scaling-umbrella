@@ -1,78 +1,99 @@
+'use strick'
+
 class BinaryTree {
   constructor() {
-    this.root = null;
+    this.value = null;
+    this.right = null;
+    this.left = null;
   }
-
-
-  insert(int, currentNode, newNode) {
-    newNode = newNode || {
-      int: int,
-      left: null,
-      right: null,
-    };
-    currentNode = currentNode || this.root;
-    if (this.root === null) {
-      this.root = newNode;
-      return;
-    }
-
-    if (currentNode.int === null) {
-      currentNode.int = newNode;
-      return;
-    }
-
-
-    if (newNode.int < currentNode.int) {
-      if (currentNode.left === null) {
-        currentNode.left = newNode;
-      } else {
-        this.insert(int, currentNode.left, newNode);
-      }
-    }
-
-    if (newNode.int === currentNode.int) {
-      throw new Error('This int already exist')
-    }
-
-    if (newNode.int > currentNode.int) {
-      if (currentNode.right === null) {
-        currentNode.right = newNode;
-      } else {
-        this.insert(int, currentNode.rigth, newNode)
-      }
-    }
-  }
-
-  search(int, currentNode) {
-    currentNode = currentNode || this.root;
-
-    if (currentNode === null) {
-      return false;
-    }
-    if (currentNode.int === int) {
+  insert(value, currentNode) {
+    currentNode = currentNode || this;
+    if (!currentNode.value) {
+      currentNode.value = value;
       return true;
     }
 
-    if (currentNode.int > int) {
-      return this.search(int, currentNode.left);
+    if (value > currentNode.value) {
+      if (!currentNode.right) {
+        currentNode.right = new BinaryTree();
+      }
+      return this.insert(value, currentNode.right);
+    } else {
+      if (!currentNode.left) {
+        currentNode.left = new BinaryTree();
+      }
+      return this.insert(value, currentNode.left);
     }
-    if (currentNode.int < int) {
-      return this.search(int, currentNode.right);
+  }
+
+  search(value, currentNode) {
+    currentNode = currentNode || this;
+    if (value > currentNode.value) {
+      if (!currentNode.right) {
+        return null;
+      }
+      return this.search(value, currentNode.right);
+    } else if (value < currentNode.value) {
+      if (!currentNode.left) {
+        return null;
+      }
+      return this.search(value, currentNode.left);
+    } else {
+      return currentNode.value;
+    }
+  }
+  getMin(currentNode) {
+    currentNode = currentNode || this;
+    if (!currentNode.left) {
+      return currentNode;
+    }
+    return this.getMin(currentNode.left);
+  }
+  delete(value, currentNode) {
+    currentNode = currentNode || this;
+    if (value > currentNode.value) {
+      if (!currentNode.right) {
+        return false;
+      }
+      currentNode.right = this.delete(value, currentNode.right);
+      return currentNode;
+    } else if (value < currentNode.value) {
+      if (!currentNode.left) {
+        return false;
+      }
+      currentNode.left = this.delete(value, currentNode.left);
+      return currentNode;
+    } else {
+      if (!currentNode.left && !currentNode.right) {
+        currentNode = null;
+        return currentNode;
+      } else if (!currentNode.right) {
+        currentNode = currentNode.left;
+        return currentNode;
+      } else if (!currentNode.left) {
+        currentNode = currentNode.right;
+        return currentNode;
+      } else {
+        let min = this.getMin(currentNode.right);
+        currentNode.value = min.value;
+        currentNode.right = this.delete(min.value, currentNode.right);
+        return currentNode;
+      }
     }
   }
 }
 
 Array.prototype.myFirstSort = function() {
-    for (let i = 1, l = this.length; i < l; i++) {
-        const current = this[i];
-        let j = i;
-        while (j > 0 && this[j - 1] > current) {
-            this[j] = this[j - 1];
-            j--;
-        }
-        this[j] = current;
+  for (let i = 1, l = this.length; i < l; i++) {
+    const current = this[i];
+    let j = i;
+    while (j > 0 && this[j - 1] > current) {
+      this[j] = this[j - 1];
+      j--;
     }
-    return this;
+    this[j] = current;
+  }
+  return this;
 };
 
 Array.prototype.mySecondSort = function() {
